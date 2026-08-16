@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026, GetMasterCrafter
+ * Copyright (c) 2026, Zentosplay
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
