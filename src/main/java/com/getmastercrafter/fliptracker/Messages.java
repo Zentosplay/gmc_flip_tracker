@@ -24,34 +24,37 @@
  */
 package com.getmastercrafter.fliptracker;
 
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-@ConfigGroup("gmc-flip-tracker")
-public interface GmcFlipTrackerConfig extends Config
+/**
+ * Panel/status text in English, Portuguese, or Spanish, picked from the JVM's
+ * default locale ({@code messages_pt.properties} / {@code messages_es.properties}
+ * / the base {@code messages.properties} for anything else, including plain
+ * English) - this is exactly {@link ResourceBundle}'s built-in fallback chain,
+ * no custom locale-matching logic needed. The plugin config screen (RuneLite
+ * {@code @ConfigItem} annotations) is intentionally not part of this: annotation
+ * values are compile-time constants and can't be swapped at runtime, so that
+ * screen stays English-only by design.
+ */
+final class Messages
 {
-	@ConfigItem(
-		position = 1,
-		keyName = "apiToken",
-		name = "GMC API token",
-		description = "The token generated in your account at getmastercrafter.com (Settings > OSRS Plugin).",
-		secret = true
-	)
-	default String apiToken()
+	private static final String BUNDLE_NAME = "com.getmastercrafter.fliptracker.messages";
+	private static final ResourceBundle BUNDLE =
+		ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault(), Messages.class.getClassLoader());
+
+	private Messages()
 	{
-		return "";
 	}
 
-	@ConfigItem(
-		position = 2,
-		keyName = "sendEnabled",
-		name = "Send trades to GetMasterCrafter",
-		description = "Sends your Grand Exchange trades (bought/sold, item, quantity, price) to your Profit Tracker on GetMasterCrafter.",
-		warning = "This feature submits your IP address to a 3rd-party server not controlled or verified by RuneLite developers"
-	)
-	default boolean sendEnabled()
+	static String get(String key)
 	{
-		return false;
+		return BUNDLE.getString(key);
+	}
+
+	static String get(String key, Object... args)
+	{
+		return new MessageFormat(BUNDLE.getString(key), Locale.getDefault()).format(args);
 	}
 }

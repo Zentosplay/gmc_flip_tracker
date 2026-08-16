@@ -124,7 +124,7 @@ class GmcApiClient
 			public void onFailure(Call call, IOException e)
 			{
 				log.debug("gmc-flip-tracker: network failure submitting trade", e);
-				scheduleRetryOrGiveUp(event, listener, attemptCount, "Sem conexao com o GetMasterCrafter.");
+				scheduleRetryOrGiveUp(event, listener, attemptCount, Messages.get("fallback.noConnection"));
 			}
 
 			@Override
@@ -150,7 +150,7 @@ class GmcApiClient
 		catch (IOException e)
 		{
 			log.debug("gmc-flip-tracker: failed reading response body", e);
-			scheduleRetryOrGiveUp(event, listener, attemptCount, "Resposta invalida do servidor.");
+			scheduleRetryOrGiveUp(event, listener, attemptCount, Messages.get("fallback.invalidResponse"));
 			return;
 		}
 
@@ -179,13 +179,14 @@ class GmcApiClient
 		{
 			// Format/absent token, or a token that's valid-shaped but revoked
 			// or unknown - retrying will never succeed without user action.
-			listener.onAuthError(event, extractError(bodyString, "Token invalido ou ausente."));
+			listener.onAuthError(event, extractError(bodyString, Messages.get("fallback.invalidToken")));
 			return;
 		}
 
 		if (code == 429 || code == 503)
 		{
-			scheduleRetryOrGiveUp(event, listener, attemptCount, extractError(bodyString, "Servico indisponivel."));
+			scheduleRetryOrGiveUp(event, listener, attemptCount,
+				extractError(bodyString, Messages.get("fallback.serviceUnavailable")));
 			return;
 		}
 
@@ -194,7 +195,7 @@ class GmcApiClient
 		// event would just fail the same way, so log and surface it without
 		// consuming a retry attempt.
 		log.warn("gmc-flip-tracker: rejected event (HTTP {}): {}", code, bodyString);
-		listener.onRejected(event, extractError(bodyString, "Um ou mais eventos sao invalidos."));
+		listener.onRejected(event, extractError(bodyString, Messages.get("fallback.eventsInvalid")));
 	}
 
 	private void scheduleRetryOrGiveUp(PluginTradeEvent event, ResultListener listener, AtomicInteger attemptCount,

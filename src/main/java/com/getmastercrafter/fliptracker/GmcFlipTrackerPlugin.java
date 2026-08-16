@@ -56,7 +56,7 @@ import net.runelite.client.util.ImageUtil;
 @Slf4j
 @PluginDescriptor(
 	name = "GMC Flip Tracker",
-	description = "Envia suas transacoes da Grand Exchange ao GetMasterCrafter para o seu Profit Tracker",
+	description = "Sends your Grand Exchange trades to GetMasterCrafter for your Profit Tracker",
 	tags = {"grand exchange", "flipping", "tracker", "getmastercrafter", "profit"}
 )
 public class GmcFlipTrackerPlugin extends Plugin
@@ -106,19 +106,19 @@ public class GmcFlipTrackerPlugin extends Plugin
 		public void onAuthError(PluginTradeEvent event, String message)
 		{
 			log.warn("gmc-flip-tracker: auth error submitting trade: {}", message);
-			SwingUtilities.invokeLater(() -> panel.onError("Token invalido ou revogado - gere um novo no site."));
+			SwingUtilities.invokeLater(() -> panel.onError(Messages.get("error.authInvalid")));
 		}
 
 		@Override
 		public void onRejected(PluginTradeEvent event, String message)
 		{
-			SwingUtilities.invokeLater(() -> panel.onError("Erro ao enviar (ver logs do RuneLite): " + message));
+			SwingUtilities.invokeLater(() -> panel.onError(Messages.get("error.rejectedPrefix", message)));
 		}
 
 		@Override
 		public void onGaveUp(PluginTradeEvent event, String message)
 		{
-			SwingUtilities.invokeLater(() -> panel.onError("Sem conexao com o GetMasterCrafter: " + message));
+			SwingUtilities.invokeLater(() -> panel.onError(Messages.get("error.connectionPrefix", message)));
 		}
 	};
 
